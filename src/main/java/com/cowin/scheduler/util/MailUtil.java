@@ -46,9 +46,18 @@ public class MailUtil {
 
 	@Value("${email.format}")
 	private String cowinMailFormat;
-	
+
 	@Value("${cowin.user.mainLocation}")
 	private String importantPinCode;
+
+	@Value("${cowin.user.doseNumber}")
+	private int userVaccineDoseNum;
+
+	@Value("${cowin.user.fee_type}")
+	private String userVaccineFeeType;
+
+	@Value("${cowin.user.vaccineType}")
+	private String userVaccineType;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MailUtil.class);
 
@@ -67,7 +76,7 @@ public class MailUtil {
 				}
 			});
 
-			Message mailMessage = prepreMessage(mailSession, formatMailBody(cowinData));
+			Message mailMessage = prepareMessage(mailSession, formatMailBody(cowinData));
 			Transport.send(mailMessage);
 		} catch (MessagingException e) {
 			LOGGER.error("Error sending email", e);
@@ -78,13 +87,13 @@ public class MailUtil {
 		LOGGER.info("email send to :" + emailRecipient + " with subject: " + cowinMailSubject);
 	}
 
-	private Message prepreMessage(Session mailSession, String sendTextBody) {
+	private Message prepareMessage(Session mailSession, String sendTextBody) {
 		Message message = new MimeMessage(mailSession);
 
 		try {
 			message.setFrom(new InternetAddress(cowinEmail));
 			message.setRecipient(Message.RecipientType.TO, new InternetAddress(emailRecipient));
-			if(!emailRecipientCc.isEmpty() && !emailRecipientCc.equals(null)) {
+			if (!emailRecipientCc.isEmpty() && !emailRecipientCc.equals(null)) {
 				message.setRecipient(Message.RecipientType.CC, new InternetAddress(emailRecipientCc));
 			}
 			message.setContent(sendTextBody, cowinMailFormat);
@@ -98,8 +107,10 @@ public class MailUtil {
 	private String formatMailBody(Map<Integer, List<String>> cowinData) {
 		String mainLocation = "";
 		StringBuffer tableBody = new StringBuffer();
-		tableBody.append("Hi,<br/>");
-		tableBody.append("<h3>Free Slot Available on Cowin</h3><br/>");
+		tableBody.append("Hi User,<br/>");
+		tableBody.append("<h3>Slot available for vaccination are mentioned below</h3>");
+		tableBody.append("<p>userVaccineDoseNum:" + userVaccineDoseNum + ",          userVaccineFeeType:"
+				+ userVaccineFeeType + ",             userVaccineType:" + userVaccineType + " </p><br/>");
 		tableBody.append("<table cellspacing=\"3\" bgcolor=\"#000000\">");
 		tableBody.append("<tr bgcolor=\"#cdf7f9\">");
 		tableBody.append(
@@ -109,9 +120,9 @@ public class MailUtil {
 		for (Integer centerId : cowinData.keySet()) {
 			List<String> valueCowin = cowinData.get(centerId);
 			if (valueCowin.get(2).equals(importantPinCode)) {
-				mainLocation = "<h2 style=\"background-color:DodgerBlue;\" >Available at "+importantPinCode+" ,capacity:"
-						+ valueCowin.get(4) + "</h2><br/>";
-				cowinMailSubject=importantPinCode+" "+cowinMailSubject;
+				mainLocation = "<h2 style=\"background-color:DodgerBlue;\" >Available at " + importantPinCode
+						+ " ,capacity:" + valueCowin.get(4) + "</h2><br/>";
+				cowinMailSubject = importantPinCode + " " + cowinMailSubject;
 			}
 			tableBody.append("<tr bgcolor=\"#ffffff\">");
 
