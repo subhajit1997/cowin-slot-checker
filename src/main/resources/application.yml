@@ -1,0 +1,38 @@
+cowin:
+  availablity:
+   host: cdn-api.co-vin.in
+   district:
+    path: /api/v2/appointment/sessions/public/calendarByDistrict
+    district_id: XXXXXXXX
+  user:
+    minAge: 18 
+    vaccineType: COVISHIELD
+    doseNumber: 2
+    fee_type: Free
+    mainLocation: XXXXXXXX
+
+request:
+  connection:
+    timeout: 1000
+  socket:
+    timeout: 60000
+  accepts: application/json
+  content:
+    type: application/json
+response:
+  content:
+    type: application/json;charset=UTF-8
+
+http:
+  maxHttpConnections: 100
+  maxHttpConnectionsPerRoute: 10
+
+email:
+  host: smtp.gmail.com
+  port: 587
+  to: XXXXXXXX@gmail.com
+  from: XXXXXXXX@gmail.com
+  cc : 
+  password: XXXXXXXX
+  subject: COWIN SLOT AVAILIBILITY CHECK
+  format: text/html
